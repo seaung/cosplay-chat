@@ -1,0 +1,75 @@
+/* 基础重置 */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 现代字体渲染优化 */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-size-adjust: 100%;
+  line-height: 1.5;
+}
+
+/* 滚动行为优化 */
+html:focus-within {
+  scroll-behavior: smooth;
+}
+
+/* 核心元素重置 */
+body {
+  min-height: 100vh;
+  text-rendering: optimizeSpeed;
+}
+
+ul[role='list'],
+ol[role='list'] {
+  list-style: none;
+}
+
+a:not([class]) {
+  text-decoration-skip-ink: auto;
+}
+
+img,
+picture,
+svg {
+  max-width: 100%;
+  display: block;
+  vertical-align: middle;
+}
+
+/* 表单元素统一 */
+button,
+input,
+optgroup,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+  border: 1px solid transparent;
+  background-color: transparent;
+}
+
+/* 移除动画偏好设置 */
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+  
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Ant Design X 特定优化 */
+.ant-x-icon {
+  vertical-align: text-bottom;
+}
