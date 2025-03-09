@@ -1,11 +1,7 @@
-import ChatLayout from "./layouts"
+import AppRouter from './router'
 
 function App() {
-  return (
-    <>
-      <ChatLayout/>
-    </>
-  )
+  return <AppRouter />
 }
 
 export default App
