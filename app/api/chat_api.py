@@ -37,10 +37,20 @@ chat_api = APIRouter(prefix="/chat")
 async def ask_post(request: QuestionRequest, current_user: User = Depends(get_current_user)):
     # 创建或获取会话
     conversation = None
+    conversation_history = []
+    
     if request.conversation_id:
         conversation = await Conversation.filter(id=request.conversation_id, user=current_user).first()
         if not conversation:
             raise HTTPException(status_code=404, detail="会话不存在")
+        
+        # 获取历史消息
+        history_messages = await Message.filter(conversation=conversation).order_by("created_at")
+        for msg in history_messages:
+            conversation_history.append({
+                "role": "user" if msg.role == "user" else "assistant",
+                "content": msg.content
+            })
     else:
         # 创建新会话
         conversation = await Conversation.create(
@@ -63,7 +73,7 @@ async def ask_post(request: QuestionRequest, current_user: User = Depends(get_cu
     # 创建生成器包装函数，用于保存AI回复
     async def response_generator():
         full_response = ""
-        async for chunk in chat.ask(request.question):
+        async for chunk in chat.ask(request.question, conversation_history):
             full_response += chunk
             yield chunk
         
@@ -88,10 +98,20 @@ async def ask_get(question: str = Query(...), conversation_id: str = Query(None)
     
     # 创建或获取会话
     conversation = None
+    conversation_history = []
+    
     if conversation_id:
         conversation = await Conversation.filter(id=conversation_id, user=current_user).first()
         if not conversation:
             raise HTTPException(status_code=404, detail="会话不存在")
+        
+        # 获取历史消息
+        history_messages = await Message.filter(conversation=conversation).order_by("created_at")
+        for msg in history_messages:
+            conversation_history.append({
+                "role": "user" if msg.role == "user" else "assistant",
+                "content": msg.content
+            })
     else:
         # 创建新会话
         conversation = await Conversation.create(
@@ -114,7 +134,7 @@ async def ask_get(question: str = Query(...), conversation_id: str = Query(None)
     # 创建生成器包装函数，用于保存AI回复
     async def response_generator():
         full_response = ""
-        async for chunk in chat.ask(question):
+        async for chunk in chat.ask(question, conversation_history):
             full_response += chunk
             yield chunk
         
